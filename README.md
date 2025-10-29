@@ -23,7 +23,7 @@ You will receive a starter repository containing:
 
 - 6 sample posts (each with text content and an image)
 - UI structure with like, comment, and bookmark icons for each post
-Authentication flow (Register/Login) already implemented
+- Authentication flow (Register/Login) already implemented
 - Basic routing and state management setup
 
 ### Backend
