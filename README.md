@@ -1,5 +1,5 @@
 # Social Media Assessment
-*~ By Vanixqbit LLP*
+~ By Vanixqbit LLP
 
 **Time Estimation: 8-10 hours**
 
