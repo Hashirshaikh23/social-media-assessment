@@ -1,7 +1,7 @@
 # Social Media Assessment
 ~ By Vanixqbit LLP
 
-**Time Estimation: 8-10 hours**
+**Time Estimation: 10-12 hours**
 
 ## Project Requirement
 
@@ -175,9 +175,13 @@ Provide clear instructions on:
 
 ### Submission Format
 
-Email the document and github URL to: [sales@vanixqbit.com](sales@vanixqbit.com)
+1. Fork this repository in your own account
 
-Subject: Freelancer Assessment - [Your Name]
+2. Make changes into it with proper comments and following standardized project structure
+
+3. Email the document for the answers of questions mentioned in Part 1 and github URL to: <a href="mailto:sales@vanixqbit.com">sales@vanixqbit.com</a>
+
+4. Subject: Freelancer Assessment - [Your Name]
 
 ### Next Steps
 
