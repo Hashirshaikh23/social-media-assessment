@@ -11,27 +11,34 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { loginService } from "@/services/auth.service";
 import Link from "next/link";
+import { toast } from "sonner";
+import { registerService } from "@/services/auth.service";
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const handleLogin = async (formData: FormData) => {
-    const username = String(formData.get("username") || "");
-    const password = String(formData.get("password") || "");
+  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const formData = new FormData(event.target as HTMLFormElement);
 
-    const res = await loginService({ username, password });
+      const fullName = String(formData.get("fullName") || "");
+      const username = String(formData.get("username") || "");
+      const password = String(formData.get("password") || "");
 
-    if (!res.success) {
-      toast.error(res.message);
+      const res = await registerService({ fullName, username, password });
+      if (!res.success) {
+        toast.error(res.message || "Something went wrong");
+        return;
+      }
+      toast.success(res.message || "Register successful");
+      router.push("/feed");
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong");
+      return;
     }
-
-    toast.success("Login successful");
-    router.push("/feed");
   };
-
   return (
     <div className="min-h-[calc(100dvh-0px)] flex items-center justify-center p-4">
       <Card className="w-full max-w-sm">
@@ -40,9 +47,11 @@ export default function RegisterPage() {
           <CardDescription>Create your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={handleLogin} className="grid gap-4">
+          <form onSubmit={handleRegister} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="fullName">Full Name <span className="text-red-500">*</span></Label>
+              <Label htmlFor="fullName">
+                Full Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="fullName"
                 name="fullName"
@@ -53,7 +62,9 @@ export default function RegisterPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="username">Username <span className="text-red-500">*</span></Label>
+              <Label htmlFor="username">
+                Username <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="username"
                 name="username"
@@ -64,7 +75,9 @@ export default function RegisterPage() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password <span className="text-red-500">*</span></Label>
+              <Label htmlFor="password">
+                Password <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="password"
                 name="password"

@@ -1,21 +1,23 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { logoutService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { logoutService } from "@/services/auth.service";
 
 export default function ProtectedNavbar() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    const res = await logoutService();
-    if (!res.success) {
-      toast.error(res.message);
+    try {
+      const res = await logoutService();
+      
+      toast.success(res.message || "Logged out successfully");
+      router.push("/login");
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong");
       return;
     }
-    toast.success("Logged out successfully");
-    router.push("/login");
   };
 
   return (

@@ -18,18 +18,25 @@ import { loginService } from "@/services/auth.service";
 export default function LoginPage() {
   const router = useRouter();
 
-  const handleLogin = async (formData: FormData) => {
-    const username = String(formData.get("username") || "");
-    const password = String(formData.get("password") || "");
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const formData = new FormData(event.target as HTMLFormElement);
 
-    const res = await loginService({ username, password });
+      const username = String(formData.get("username") || "");
+      const password = String(formData.get("password") || "");
 
-    if (!res.success) {
-      toast.error(res.message);
+      const res = await loginService({ username, password });
+      if (!res.success) {
+        toast.error(res.message || "Something went wrong");
+        return;
+      }
+      toast.success(res.message || "Login successful");
+      router.push("/feed");
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong");
+      return;
     }
-
-    toast.success("Login successful");
-    router.push("/feed");
   };
 
   return (
@@ -40,7 +47,7 @@ export default function LoginPage() {
           <CardDescription>Access your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={handleLogin} className="grid gap-4">
+          <form onSubmit={handleLogin} className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="username">Username <span className="text-red-500">*</span></Label>
               <Input
