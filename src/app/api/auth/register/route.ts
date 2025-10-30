@@ -5,9 +5,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const requestSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(3).max(100),
   password: z.string().min(6),
-  name: z.string().min(3).max(100),
+  fullName: z.string().min(3).max(100),
 });
 
 function getJwtSecret(): string {
@@ -21,22 +21,22 @@ function getJwtSecret(): string {
 export async function POST(req: Request) {
   try {
     const payload = await req.json();
-    const { email, password, name } = requestSchema.parse(payload);
+    const { fullName, username, password } = requestSchema.parse(payload);
 
     const db = await getDb();
 
-    const existing = await db.collection("users").findOne({ email });
+    const existing = await db.collection("users").findOne({ username });
     if (existing) {
-      return NextResponse.json({ message: "Email already in use" }, { status: 409 });
+      return NextResponse.json({ message: "Username already in use" }, { status: 409 });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
 
     const now = new Date();
     const insertResult = await db.collection("users").insertOne({
-      email,
+      username,
       password: passwordHash,
-      name,
+      fullName,
       createdAt: now,
       updatedAt: now,
     });
@@ -44,14 +44,14 @@ export async function POST(req: Request) {
     const userId = String(insertResult.insertedId);
 
     const token = jwt.sign(
-      { sub: userId, email },
+      { sub: userId, username },
       getJwtSecret(),
       { expiresIn: "1h" }
     );
 
-    const res = NextResponse.json({ token, user: { _id: userId, email, name } });
+    const res = NextResponse.json({ token, user: { _id: userId, username, fullName } }, { status: 201 });
     const isProd = process.env.NODE_ENV === "production";
-    res.cookies.set("token", token, {
+    res.cookies.set("social_token", token, {
       httpOnly: true,
       secure: isProd,
       sameSite: "lax",

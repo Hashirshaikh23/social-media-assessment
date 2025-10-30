@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 
 const requestSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(3).max(100),
   password: z.string().min(6),
 });
 
@@ -21,11 +21,11 @@ function getJwtSecret(): string {
 export async function POST(req: Request) {
   try {
     const json = await req.json();
-    const { email, password } = requestSchema.parse(json);
+    const { username, password } = requestSchema.parse(json);
 
     const db = await getDb();
-    const user = await db.collection("users").findOne<{ _id: ObjectId; email: string; password: string; name?: string }>(
-      { email }
+    const user = await db.collection("users").findOne<{ _id: ObjectId; username: string; password: string; fullName?: string }>(
+      { username }
     );
 
     if (!user || !user.password) {
@@ -39,14 +39,14 @@ export async function POST(req: Request) {
 
     const secret = getJwtSecret();
     const token = jwt.sign(
-      { sub: String(user._id), email: user.email },
+      { sub: String(user._id), username },
       secret,
       { expiresIn: "1h" }
     );
 
-    const res = NextResponse.json({ token });
+    const res = NextResponse.json({ token, user: { _id: user._id, username: user.username, fullName: user.fullName } }, { status: 200 });
     const isProd = process.env.NODE_ENV === "production";
-    res.cookies.set("token", token, {
+    res.cookies.set("social_token", token, {
       httpOnly: true,
       secure: isProd,
       sameSite: "lax",
