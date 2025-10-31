@@ -1,7 +1,7 @@
 # Comments Feature - Requirements Specification
 
 **Document Version:** 1.1  
-**Date:** 2025  
+**Date:** 2025
 **Feature:** Single-Level Comments System
 
 ---
